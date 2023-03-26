@@ -4,7 +4,6 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
-using System.IO;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,9 +16,6 @@ namespace DeviceManagementApi.Services
         private readonly InventoryServiceOptions _serviceOptions;
 
         private const string getAssetId = "/assetId";
-
-        private readonly string workingDirectory = Environment.CurrentDirectory;
-        private readonly string dummyResponseTextFile = "DummyResponseContents.txt";
 
         public InventoryService(IHttpClientFactory httpClientFactory, IOptions<AppOptions> appOptions)
         {
@@ -60,16 +56,14 @@ namespace DeviceManagementApi.Services
             httpRequest.Content = new StringContent(body, Encoding.UTF8, "application/json");
             httpRequest.Headers.Add("x-functions-key", _serviceOptions.PostFunctionKey);
 
-            //var response = await _client.SendAsync(httpRequest);
+            var response = await _client.SendAsync(httpRequest);
 
-            //if (response.StatusCode != System.Net.HttpStatusCode.OK)
-            //{
-            //    throw new Exception($"Failed in calling inventory endpoint with Status Code: [{response.StatusCode}]");
-            //}
+            if (response.StatusCode != System.Net.HttpStatusCode.OK)
+            {
+                throw new Exception($"Failed in calling inventory endpoint with Status Code: [{response.StatusCode}]");
+            }
 
-            //var jsonString = await response.Content.ReadAsStringAsync();
-
-            var jsonString = await File.ReadAllTextAsync(Path.Combine(workingDirectory, dummyResponseTextFile));
+            var jsonString = await response.Content.ReadAsStringAsync();
 
             return JsonConvert.DeserializeObject<InventoryDeviceListModel>(jsonString);
         }

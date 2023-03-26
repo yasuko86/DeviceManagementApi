@@ -15,6 +15,7 @@ namespace DeviceManagementApi
             var config = new ConfigurationBuilder()
                 .SetBasePath(builder.GetContext().ApplicationRootPath)
                 .AddJsonFile("local.settings.json", true, true)
+                .AddJsonFile("test.settings.json", true, true)
                 .AddEnvironmentVariables()
                 .Build();
 

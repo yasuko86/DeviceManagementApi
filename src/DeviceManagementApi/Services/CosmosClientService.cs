@@ -11,14 +11,14 @@ namespace DeviceManagementApi.Services
 {
     public class CosmosClientService : ICosmosClientService
     {
-        private readonly ILogger _logger;
-        private readonly CosmosDBOptions _serviceOptions;
+        private readonly ILogger<CosmosClientService> _logger;
+        private readonly CosmosDbOptions _serviceOptions;
         private Database _db;
 
-        public CosmosClientService(ILogger logger, IOptions<AppOptions> appOptions)
+        public CosmosClientService(ILogger<CosmosClientService> logger, IOptions<AppOptions> appOptions)
         {
             _logger = logger;
-            _serviceOptions = appOptions?.Value.CosmosDBOptions ?? throw new ArgumentNullException(nameof(appOptions));
+            _serviceOptions = appOptions?.Value.CosmosDbOptions ?? throw new ArgumentNullException(nameof(appOptions));
         }
 
         public async Task<List<string>> StoreDevices(List<DeviceRecordModel> devices)
@@ -33,7 +33,7 @@ namespace DeviceManagementApi.Services
             {
                 try
                 {
-                    await container.UpsertItemAsync<DeviceRecordModel>(device, new PartitionKey(device.AssetId));
+                    await container.UpsertItemAsync<DeviceRecordModel>(device, new PartitionKey(device.Id));
                 }
                 catch (Exception ex)
                 {
@@ -47,7 +47,7 @@ namespace DeviceManagementApi.Services
 
         private async Task<Container> GetContainer()
         {
-            return await _db.CreateContainerIfNotExistsAsync(_serviceOptions.ContainerName, "/assetId", 400);
+            return await _db.CreateContainerIfNotExistsAsync(_serviceOptions.ContainerName, "/id", 400);
         }
     }
 }

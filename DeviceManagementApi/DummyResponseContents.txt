@@ -1,0 +1,1 @@
+{"devices":[{"deviceId":"DVID000001","assetId":"86370303084441"},{"deviceId":"DVID000002","assetId":"86370303089487"},{"deviceId":"DVID000003","assetId":"86370303097503"}]}

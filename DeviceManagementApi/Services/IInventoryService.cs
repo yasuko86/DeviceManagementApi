@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using DeviceManagementApi.Models;
 using System.Threading.Tasks;
 
 namespace DeviceManagementApi.Services
 {
-    internal interface IInventoryService
+    public interface IInventoryService
     {
+        Task<InventoryDeviceModel> GetAsync(string devideId);
+        Task<InventoryDeviceListModel> PostAsync(string[] deviceIds);
     }
 }

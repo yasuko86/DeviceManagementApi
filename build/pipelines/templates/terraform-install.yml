@@ -2,7 +2,7 @@ parameters:
   terraformVersion: '1.2.5'
 
 steps:
-  - task: TerraformInstaller
+  - task: TerraformInstaller@0
     displayName: Install Terraform ${{ parameters.terraformVersion }}
     inputs:
         terraformVersion: ${{ parameters.terraformVersion }}

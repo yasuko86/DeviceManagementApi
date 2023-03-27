@@ -30,10 +30,12 @@ stages:
           azurePowerShellVersion: 'LatestVersion'
 
     - deployment: Deployment
-      displayName: 
+      displayName: Deployment Resource and App
       dependsOn: CreateTerraformBackend
       pool:
         vmImage: 'ubuntu-latest'
+      environment:
+        name: TestEnvironment
       strategy:
         runOnce:
           deploy:

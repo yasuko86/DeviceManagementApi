@@ -1,0 +1,25 @@
+parameters: 
+  project: ''
+
+steps: 
+- task: DotNetCoreCLI@2
+  displayName: 'Build ${{ parameters.project }}'
+  inputs:
+    command: build
+    projects: '**/${{ parameters.project }}/*.csproj'
+    arguments: '--output ${{ parameters.project }}/publish_output --configuration Release'
+  
+- task: ArchiveFiles@2
+  displayName: 'Archive ${{ parameters.project }}'
+  inputs:
+    rootFolderOrFile: '$(System.DefaultWorkingDirectory)/${{ parameters.project }}/publish_output'
+    includeRootFolder: false
+    archiveFile: '$(System.DefaultWorkingDirectory)/${{ parameters.project }}-$(Build.BuildId).zip'
+    architeType: 'zip'
+    replaceExistingArchive: true
+
+- task: PublishPipelineArtifact@1
+  displayName: 'Publish ${{ parameters.project }} artifact'
+  inputs:
+    targetPath: 
+    artifact: '${{ parameters.project }}'

@@ -1,0 +1,69 @@
+variables: 
+  SOLUTION_NAME: "DeviceManagementApi"
+  SOLUTION_PATH: "$(Build.SourcesDirectory)"
+  APPLICATION_NAME: "vNextDeviceManagementApiYO"
+  PROJECT_NAME: "DeviceManagementApi"
+
+stages:
+- stage: Test
+  displayName: ''
+  jobs: 
+    - job: Unit and Integration Test
+      displayName: ''
+      pool:
+        vmImage: 'windows-2019'
+      steps:
+        - task: UseDotNet@2
+          displayName: 'Use .NET 6.0 SDK'
+          inputs:
+            packageType: sdk
+            version: '6.0.x'
+            performMultiLevelLookup: true
+
+        - task: DotNetCoreCLI@2
+          displayName: 'Build $(SOLUTION_NAME)'
+          inputs:
+            command: build
+            workingDirectory: $(SOLUTION_PATH)
+            arguments: '--output $(SOLUTION_NAME)/publish_output --configuration Release'
+
+        - task: DotNetCoreCLI@2
+          displayName: 'Run Unit Tests'
+          condition: succeeded()
+          inputs:
+            command: test
+            projects: '**/*.Tests.csproj'
+
+        ## Need to install and run Cosmos emulator here
+
+        - task: DotNetCoreCLI@2
+          displayName: 'Run Integration Tests'
+          condition: succeeded()
+          inputs:
+            command: test
+            projects: '**/*.Integration.csproj'
+
+- stage: Build 
+  displayName: 'Build artifact'
+  jobs: 
+    - job: BuildFunctionApp
+      displayName: 'Build Function App'
+      pool:
+        vmImage: 'ubuntu-latest'
+
+      steps: 
+      - template: templates/function-app-build.yml
+        parameters:
+          project: '$(PROJECT_NAME)'
+
+- template: deploy.yml
+  parameters: 
+    location: 'australiaeast'
+    projectName: '$(PROJECT_NAME)'
+    subscription_name: 'Azure subscription 1' 
+    subscription_id: 'c755eaa3-ebe1-4259-8bd9-3ebc4cd88122'
+    api_application_name: '$(APPLICATION_NAME)'
+    azure_ad_tenant_id: '9c125f1c-4fc9-49ee-8aec-143e46ae627d'
+    inventory_api_url: $(inventory_api_url) # TODO: set as secret variable in UI
+    inventory_get_key: $(inventory_api_get_function_key) # TODO: set as secret variable in UI
+    inventory_post_key: $(inventory_api_post_function_key) # TODO: set as secret variable in UI

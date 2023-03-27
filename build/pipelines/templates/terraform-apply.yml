@@ -1,0 +1,19 @@
+parameters: 
+  subscription_name: ''
+  subscription_id: ''
+  inventory_api_url: ''
+  inventory_get_key: ''
+  inventory_post_key: ''
+  function_app_name: ''
+
+steps:
+  - task: AzureCLI@2
+    displayName: 'Terraform Plan and Apply'
+    name: TerraformApply
+    inputs:
+      azureSubscription: '${{ parameters.subscription_name }} (${{ parameters.subscription_id }})'
+      scriptType: pscore
+      scriptLocation: 'scriptPath'
+      scriptPath: 'build/pipelines/scripts/CreateTerraformBackend.ps1'
+      arguments: '${{ parameters.location }} ${{ parameters.subscription_id }} ${{ parameters.inventory_api_url }} ${{ parameters.inventory_get_key }} ${{ parameters.inventory_post_key }} ${{ parameters.function_app_name }}'
+

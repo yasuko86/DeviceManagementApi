@@ -1,0 +1,62 @@
+parameters:
+  location: ''
+  projectName: ''
+  subscription_name: '' 
+  subscription_id: ''
+  api_application_name: ''
+  azure_ad_tenant_id: ''
+  inventory_api_url: ''
+  inventory_get_key: ''
+  inventory_post_key: ''
+
+stages: 
+- stage: Deploy
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+  jobs:
+    - job: CreateTerraformBackend
+      displayName: 'Create Terraform Backend'
+      pool:
+        vmImage: 'ubuntu-latest'
+      steps:
+      - task: AzurePowerShell@5
+        displayName: 'Create Terraform Backend'
+        inputs: 
+          azureSubscription:
+          ScriptType: 'FilePath'
+          ScriptPath: 'build/pipelines/scripts/CreateTerraformBackend.ps1'
+          ScriptArguments: 
+            -Location ${{ parameters.location }}
+          FailOnStandardError: true
+          azurePowerShellVersion: 'LatestVersion'
+
+    - deployment: Deployment
+      displayName: 
+      dependsOn: CreateTerraformBackend
+      pool:
+        vmImage: 'ubuntu-latest'
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+            - download: none
+            - checkout: self
+              clean: true
+              fetchDepth: 1
+            
+            - template: terraform-install.yml
+            
+            - template: terraform-apply.yml
+              parameters: 
+                subscription_name: '${{ parameters.subscription_name }}'
+                subscription_id: '${{ parameters.subscription_id }}'
+                inventory_api_url: '${{ parameters.inventory_api_url }}'
+                inventory_get_key: '${{ parameters.inventory_get_key }}'
+                inventory_post_key: '${{ parameters.inventory_post_key }}'
+                function_app_name: '${{ parameters.api_application_name }}'
+
+            - template: function-app-deploy.yml
+              parameters: 
+                project: '${{ parameters.projectName }}'
+                function_app_name: '${{ parameters.api_application_name }}'
+                subscription_name: '${{ parameters.subscription_name }}'
+                subscription_id: '${{ parameters.subscription_id }}'

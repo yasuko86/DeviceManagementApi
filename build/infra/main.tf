@@ -1,5 +1,13 @@
 terraform {
+
     required_version = ">= 1.2.5"
+
+    required_providers {
+        azurerm = {
+        source  = "hashicorp/azurerm"
+        version = ">=3.0.0"
+        }
+    }
     
     backend "azurerm" {
       resource_group_name  = "terraform-state-deviceapi"
@@ -21,15 +29,15 @@ provider "azurerm" {
 
 data "azurerm_client_config" "current" {}
 
-resource "azure_resource_group" "resource_group" {
+resource "azurerm_resource_group" "resource_group" {
     name     = "vNextAssessment"
     location = var.location
 }
 
-resource "azure_app_service_plan" "app_service_plan" {
+resource "azurerm_app_service_plan" "app_service_plan" {
     name                = "vNextAppServicePlanYO"
     location            = var.location
-    resource_group_name = azure_resource_group.resource_group.name
+    resource_group_name = azurerm_resource_group.resource_group.name
     kind                = "FunctionApp"
 
     sku {
@@ -41,7 +49,7 @@ resource "azure_app_service_plan" "app_service_plan" {
 resource "azurerm_storage_account" "storage_account" {
     name                     = "vNextFunctionAppStorageYO"
     location                 = var.location
-    resource_group_name      = azure_resource_group.resource_group.name
+    resource_group_name      = azurerm_resource_group.resource_group.name
     account_tier             = "Standard"
     account_replication_type = "LRS"
 }
@@ -49,8 +57,8 @@ resource "azurerm_storage_account" "storage_account" {
 resource "azurerm_function_app" "function_app" {
     name                       = var.function_app_name
     location                   = var.location
-    resource_group_name        = azure_resource_group.resource_group.name
-    app_service_plan_id        = azure_app_service_plan.app_service_plan.id
+    resource_group_name        = azurerm_resource_group.resource_group.name
+    app_service_plan_id        = azurerm_app_service_plan.app_service_plan.id
     storage_account_name       = azurerm_storage_account.storage_account.name
     storage_account_access_key = azurerm_storage_account.storage_account.primary_access_key
 
@@ -77,7 +85,7 @@ resource "azurerm_function_app" "function_app" {
 resource "azurerm_cosmosdb_account" "cosmos_db_account" {
     name                = "vNextDevicesDbYO"
     location            = var.location
-    resource_group_name = azure_resource_group.resource_group.name
+    resource_group_name = azurerm_resource_group.resource_group.name
     offer_type          = "Standard"
 
     capabilities {
@@ -95,6 +103,6 @@ resource "azurerm_cosmosdb_account" "cosmos_db_account" {
 
 resource "azurerm_cosmosdb_sql_database" "cosmos_database" {
     name                 = "vNext"
-    resource_group_name  = azure_resource_group.resource_group.name
+    resource_group_name  = azurerm_resource_group.resource_group.name
     account_name         = azurerm_cosmosdb_account.cosmos_db_account.name
 }

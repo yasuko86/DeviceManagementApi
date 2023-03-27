@@ -24,6 +24,6 @@ if ($null -ne $storageAccount) {
     $context = $storageAccount.Context
     if ($null -eq $(Get-AzStorageContainer -Name $ContainerName -Context $context -ErrorAction SilentlyContinue)){
         Write-Host $ContainerName 'Create a new container...'
-        New-AzStorageContaier -Name $ContainerName -Context $context -Permission Off
+        New-AzStorageContainer -Name $ContainerName -Context $context -Permission Off
     }
 }

@@ -1,7 +1,7 @@
 resource "azurerm_key_vault" "key_vault" {
     name                        = "vNextAppKeyVaultYO"
     location                    = var.location
-    resource_group_name         = azure_resource_group.resource_group.name
+    resource_group_name         = azurerm_resource_group.resource_group.name
     enabled_for_disk_encryption = true
     sku_name                    = "standard"
     tenant_id                   = data.azurerm_client_config.current.tenant_id

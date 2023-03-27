@@ -14,6 +14,6 @@ steps:
       azureSubscription: '${{ parameters.subscription_name }} (${{ parameters.subscription_id }})'
       scriptType: pscore
       scriptLocation: 'scriptPath'
-      scriptPath: 'build/pipelines/scripts/CreateTerraformBackend.ps1'
+      scriptPath: 'build/pipelines/scripts/CI-TerraformApply.ps1'
       arguments: '${{ parameters.location }} ${{ parameters.subscription_id }} ${{ parameters.inventory_api_url }} ${{ parameters.inventory_get_key }} ${{ parameters.inventory_post_key }} ${{ parameters.function_app_name }}'
 

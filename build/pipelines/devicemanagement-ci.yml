@@ -81,7 +81,7 @@ stages:
   parameters: 
     location: 'australiaeast'
     projectName: '$(PROJECT_NAME)'
-    subscription_name: 'Azure subscription 1' 
+    subscription_name: 'Azure subscription 1 (c755eaa3-ebe1-4259-8bd9-3ebc4cd88122)' 
     subscription_id: 'c755eaa3-ebe1-4259-8bd9-3ebc4cd88122'
     api_application_name: '$(APPLICATION_NAME)'
     azure_ad_tenant_id: '9c125f1c-4fc9-49ee-8aec-143e46ae627d'

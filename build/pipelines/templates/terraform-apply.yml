@@ -11,7 +11,7 @@ steps:
     displayName: 'Terraform Plan and Apply'
     name: TerraformApply
     inputs:
-      azureSubscription: '${{ parameters.subscription_name }} (${{ parameters.subscription_id }})'
+      azureSubscription: '${{ parameters.subscription_name }}'
       scriptType: pscore
       scriptLocation: 'scriptPath'
       scriptPath: 'build/pipelines/scripts/CI-TerraformApply.ps1'

@@ -8,8 +8,8 @@ stages:
 - stage: Test
   displayName: ''
   jobs: 
-    - job: Unit and Integration Test
-      displayName: ''
+    - job: Test
+      displayName: Unit and Integration Test
       pool:
         vmImage: 'windows-2019'
       steps:

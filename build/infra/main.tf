@@ -5,7 +5,7 @@ terraform {
     required_providers {
         azurerm = {
         source  = "hashicorp/azurerm"
-        version = ">=3.0.0"
+        version = ">= 3.0.0"
         }
     }
     
@@ -47,7 +47,7 @@ resource "azurerm_app_service_plan" "app_service_plan" {
 }
 
 resource "azurerm_storage_account" "storage_account" {
-    name                     = "vNextFunctionAppStorageYO"
+    name                     = "vnextfuncappstorageyo"
     location                 = var.location
     resource_group_name      = azurerm_resource_group.resource_group.name
     account_tier             = "Standard"
@@ -63,7 +63,7 @@ resource "azurerm_function_app" "function_app" {
     storage_account_access_key = azurerm_storage_account.storage_account.primary_access_key
 
     app_settings = {
-        FUNCTIONS_WORKER_RUNTIME = dotnet
+        FUNCTIONS_WORKER_RUNTIME = "dotnet"
         InventoryServiceOptions__BaseUrl = var.inventory_api_url
         InventoryServiceOptions__GetFunctionKey = "@Microsoft.KeyVaule(SecretUri=${azurerm_key_vault.key_vault.vault_uri}secrets/${azurerm_key_vault_secret.inventory_get_function_key.name}/${azurerm_key_vault_secret.inventory_get_function_key.id})"
         InventoryServiceOptions__PostFunctionKey = "@Microsoft.KeyVaule(SecretUri=${azurerm_key_vault.key_vault.vault_uri}secrets/${azurerm_key_vault_secret.inventory_post_function_key.name}/${azurerm_key_vault_secret.inventory_post_function_key.id})"
@@ -83,21 +83,28 @@ resource "azurerm_function_app" "function_app" {
 }
 
 resource "azurerm_cosmosdb_account" "cosmos_db_account" {
-    name                = "vNextDevicesDbYO"
+    name                = "vnextdevicesyo"
     location            = var.location
     resource_group_name = azurerm_resource_group.resource_group.name
     offer_type          = "Standard"
+
+    enable_automatic_failover = true
 
     capabilities {
         name = "EnableServerless"
     }
 
     capabilities {
-        name = "DisableRateLimiteingResponses"
+        name = "DisableRateLimitingResponses"
     }
 
     consistency_policy  {
         consistency_level = "ConsistentPrefix"
+    }
+
+    geo_location {
+        location          = "westus"
+        failover_priority = 1
     }
 }
 

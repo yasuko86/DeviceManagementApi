@@ -4,6 +4,8 @@ variables:
   APPLICATION_NAME: "vNextDeviceManagementApiYO"
   PROJECT_NAME: "DeviceManagementApi"
 
+trigger: none
+
 stages:
 - stage: Test
   displayName: ''
